@@ -1,0 +1,221 @@
+# endpoints.txt - Updated with detailed API specifications
+
+Authentication Endpoints:
+- POST /api/auth/register - Register a new user
+  Body: { "name": "string", "email": "string", "password": "string" }
+  Response: { 
+    "success": "boolean", 
+    "message": "string",
+    "user": { "id": "number", "name": "string", "email": "string" } 
+  }
+
+- POST /api/auth/login - Login user
+  Body: { "email": "string", "password": "string" }
+  Response: { 
+    "success": "boolean", 
+    "message": "string",
+    "user": { "id": "number", "name": "string", "email": "string" },
+    "token": "string" 
+  }
+
+- POST /api/auth/logout - Logout user
+  Headers: { "Authorization": "Bearer <token>" }
+  Response: { "success": "boolean", "message": "string" }
+
+- GET /api/auth/me - Get current user
+  Headers: { "Authorization": "Bearer <token>" }
+  Response: { 
+    "success": "boolean", 
+    "user": { "id": "number", "name": "string", "email": "string" } 
+  }
+
+Product Endpoints:
+- GET /api/products - Get all products
+  Query Params: page, limit, category, search
+  Response: { 
+    "success": "boolean",
+    "products": [
+      {
+        "id": "number",
+        "name": "string",
+        "price": "number",
+        "image": "string",
+        "description": "string",
+        "category": "string",
+        "stock": "number"
+      }
+    ], 
+    "total": "number", 
+    "page": "number", 
+    "pages": "number" 
+  }
+
+- GET /api/products/:id - Get single product
+  Response: { 
+    "success": "boolean",
+    "product": {
+      "id": "number",
+      "name": "string",
+      "price": "number",
+      "image": "string",
+      "description": "string",
+      "category": "string",
+      "stock": "number",
+      "images": ["string"],
+      "specifications": "object"
+    } 
+  }
+
+- GET /api/products/categories - Get product categories
+  Response: { 
+    "success": "boolean",
+    "categories": ["string"] 
+  }
+
+Favorite Endpoints:
+- GET /api/favorites - Get user favorites
+  Headers: { "Authorization": "Bearer <token>" }
+  Response: { 
+    "success": "boolean",
+    "favorites": [
+      {
+        "id": "number",
+        "productId": "number",
+        "userId": "number",
+        "addedAt": "timestamp",
+        "product": "Product object"
+      }
+    ] 
+  }
+
+- POST /api/favorites/:productId - Add product to favorites
+  Headers: { "Authorization": "Bearer <token>" }
+  Response: { 
+    "success": "boolean", 
+    "message": "string", 
+    "favorite": "Favorite object" 
+  }
+
+- DELETE /api/favorites/:productId - Remove product from favorites
+  Headers: { "Authorization": "Bearer <token>" }
+  Response: { 
+    "success": "boolean", 
+    "message": "string" 
+  }
+
+Cart Endpoints:
+- GET /api/cart - Get user cart
+  Headers: { "Authorization": "Bearer <token>" }
+  Response: { 
+    "success": "boolean",
+    "cart": [
+      {
+        "id": "number",
+        "productId": "number",
+        "userId": "number",
+        "quantity": "number",
+        "addedAt": "timestamp",
+        "product": "Product object"
+      }
+    ] 
+  }
+
+- POST /api/cart - Add item to cart or update quantity
+  Headers: { "Authorization": "Bearer <token>" }
+  Body: { "productId": "number", "quantity": "number" }
+  Response: { 
+    "success": "boolean", 
+    "message": "string", 
+    "cartItem": "CartItem object" 
+  }
+
+- PUT /api/cart/:productId - Update cart item quantity
+  Headers: { "Authorization": "Bearer <token>" }
+  Body: { "quantity": "number" }
+  Response: { 
+    "success": "boolean", 
+    "message": "string", 
+    "cartItem": "CartItem object" 
+  }
+
+- DELETE /api/cart/:productId - Remove item from cart
+  Headers: { "Authorization": "Bearer <token>" }
+  Response: { 
+    "success": "boolean", 
+    "message": "string" 
+  }
+
+- DELETE /api/cart - Clear cart
+  Headers: { "Authorization": "Bearer <token>" }
+  Response: { 
+    "success": "boolean", 
+    "message": "string" 
+  }
+
+Order Endpoints:
+- GET /api/orders - Get user orders
+  Headers: { "Authorization": "Bearer <token>" }
+  Response: { 
+    "success": "boolean",
+    "orders": [
+      {
+        "id": "number",
+        "userId": "number",
+        "items": [
+          {
+            "productId": "number",
+            "quantity": "number",
+            "price": "number",
+            "name": "string",
+            "image": "string"
+          }
+        ],
+        "total": "number",
+        "status": "string",
+        "shippingAddress": "object",
+        "paymentMethod": "string",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      }
+    ] 
+  }
+
+- GET /api/orders/:id - Get order details
+  Headers: { "Authorization": "Bearer <token>" }
+  Response: { 
+    "success": "boolean",
+    "order": "Order object" 
+  }
+
+- POST /api/orders - Create new order
+  Headers: { "Authorization": "Bearer <token>" }
+  Body: { 
+    "items": [
+      { 
+        "productId": "number", 
+        "quantity": "number" 
+      }
+    ], 
+    "shippingAddress": "object", 
+    "paymentMethod": "string" 
+  }
+  Response: { 
+    "success": "boolean", 
+    "message": "string", 
+    "order": "Order object" 
+  }
+
+Contact Endpoints:
+- POST /api/contact - Send contact message
+  Body: { "name": "string", "email": "string", "message": "string" }
+  Response: { 
+    "success": "boolean", 
+    "message": "string" 
+  }
+
+Error Responses:
+- 400 Bad Request: { "success": false, "message": "Validation error", "errors": ["string"] }
+- 401 Unauthorized: { "success": false, "message": "Authentication required" }
+- 403 Forbidden: { "success": false, "message": "Access denied" }
+- 404 Not Found: { "success": false, "message": "Resource not found" }
+- 500 Internal Server Error: { "success": false, "message": "Internal server error" }
